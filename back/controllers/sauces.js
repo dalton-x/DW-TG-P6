@@ -71,3 +71,51 @@ exports.getAllSauces = (req, res, next) => {
     }
   );
 };
+
+
+// like or dislike ??
+
+exports.usersLike =(req, res, next) => {
+  const userId = req.body.userId;
+  const like = req.body.like;
+  const sauceId = req.params.id;
+  if (like == 1){  // like de la sauce
+    Sauces.updateMany( // update est obselete preference de updateMany
+    { _id: sauceId }, 
+      {
+        $inc: { likes: 1 }, // ajout de 1 au nombre de likes
+        $push: { usersLiked: userId } // ajout du userId au tableau des usersLiked
+      }
+    )
+    .then(
+      () => {
+        res.status(200).json({});
+      }
+    ).catch(
+      (error) => {
+        res.status(404).json({
+          error: error
+        });
+      }
+    );
+  }else if (like == -1){ // dislike de la sauce
+    Sauces.updateMany(  // update est obselete preference de updateMany
+      { _id: sauceId }, 
+        {
+          $inc: { dislikes: 1 }, // ajout de 1 au nombre de dislikes
+          $push: { usersDisliked: userId } // ajout du userId au tableau des usersDisliked
+        }
+      )
+      .then(
+        () => {
+          res.status(200).json();
+        }
+      ).catch(
+        (error) => {
+          res.status(404).json({
+            error: error
+          });
+        }
+      );
+  };
+};
