@@ -79,7 +79,8 @@ exports.usersLike =(req, res, next) => {
   const userId = req.body.userId;
   const like = req.body.like;
   const sauceId = req.params.id;
-  if (like == 1){  // like de la sauce
+  const saucesObject = req.file;
+  if (like == 1){  // like de la sauce pouce vert cliquer
     Sauces.updateMany( // update est obselete preference de updateMany
     { _id: sauceId }, 
       {
@@ -89,7 +90,7 @@ exports.usersLike =(req, res, next) => {
     )
     .then(
       () => {
-        res.status(200).json({});
+        res.status(200).json({message: 'L\' utilisateur aime la sauce'});
       }
     ).catch(
       (error) => {
@@ -98,7 +99,7 @@ exports.usersLike =(req, res, next) => {
         });
       }
     );
-  }else if (like == -1){ // dislike de la sauce
+  }else if (like == -1){ // dislike de la sauce pouce rouge cliquer
     Sauces.updateMany(  // update est obselete preference de updateMany
       { _id: sauceId }, 
         {
@@ -108,7 +109,7 @@ exports.usersLike =(req, res, next) => {
       )
       .then(
         () => {
-          res.status(200).json();
+          res.status(200).json({message: 'L\' utilisateur n\' aime pas la sauce'});
         }
       ).catch(
         (error) => {
@@ -117,5 +118,49 @@ exports.usersLike =(req, res, next) => {
           });
         }
       );
+  }else{ // unlike or undislike ? Pouce vert ou rouge recliquer pour retirer son choix
+    Sauces.findOne({ _id: req.params.id })// recherche de la sauce par sont _id dans la bdd par la sauce selectionné par l 'utilisateur
+    .then(
+      (sauces) => {
+      if (sauces.usersDisliked.find(userId => userId === req.body.userId)){ // verification que l'utilisateur est bien dans le tableau des personnes qui aime pas la sauce
+        Sauces.updateMany(  // update est obselete preference de updateMany
+        { _id: sauceId }, 
+          {
+            $inc: { dislikes: -1 }, // suppression de 1 au nombre de dislikes
+            $pull: { usersDisliked: userId } // suppression du userId au tableau des usersDisliked
+          }
+        )
+        .then(
+          () => {
+            res.status(200).json({message: 'L\' utilisateur n\' aimais pas la sauce et il a changer d\' avis'});
+          }
+        ).catch(
+          (error) => {
+            res.status(404).json({ error: error });
+          }
+        );        
+      }else{
+      Sauces.updateMany( // update est obselete preference de updateMany
+        { _id: sauceId }, 
+          {
+            $inc: { likes: -1 }, // suppression de 1 au nombre de likes
+            $pull: { usersLiked: userId } // suppression du userId au tableau des usersLiked
+          }
+        )
+        .then(() => 
+        {
+          res.status(200).json({message: 'L\' utilisateur aimais la sauce et il a changer d\' avis'});
+        })
+        .catch( (error) => 
+        {
+          res.status(404).json({ error: error });
+        });
+      }
+    })
+    .catch(
+      (error) => {
+        res.status(404).json({ error: error });
+      }
+    );
   };
 };
