@@ -1,11 +1,15 @@
+// Ajout de plugin externe
 const express = require('express');
 const router = express.Router();
 
+// Ajout des middleweares
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
+// Ajout du controllers
 const saucesCtrl = require('../controllers/sauces');
 
+// Déclaration des routes avec Authentification , Multer[optionnel], lien vers la function du controller
 router.get('/', auth, saucesCtrl.getAllSauces);              // Renvoie le tableau de toutes les sauces dans la base de données
 router.get('/:id', auth, saucesCtrl.getOneSauces);           // Renvoie la sauce avec l'ID fourni
 router.post('/', auth, multer, saucesCtrl.createSauces);     // Capture et enregistre l'image, analyse la sauce en utilisant une chaîne de caractères et l'enregistre dans la base de données, en définissant correctement son image URL. Remet les sauces aimées et celles détestées à 0, et les sauces usersliked et celles usersdisliked aux tableaux vides.
