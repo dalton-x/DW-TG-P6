@@ -32,16 +32,45 @@ exports.getOneSauces = (req, res, next) => {
   );
 };
 
+
 // Modifiction d'une sauce
 exports.modifySauces = (req, res, next) => {
-  const saucesObject = req.file ? //Est ce qu'on a un fichier
-    {
-      ...JSON.parse(req.body.sauces), // recupération de des inforamtion de la requete
-      imageUrl: `${req.protocol}://${req.get('host')}/sauce_image/${req.file.filename}`   // creation d'un lien pour l'image
-    } : { ...req.body };
-  Sauces.updateOne({ _id: req.params.id }, { ...saucesObject, _id: req.params.id }) //Mise a jour de la sauce par son ID
-    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));
+  // on contrôle s'il y a une nouvelle image
+  if (req.file) {   // Si l'image a été modifiée
+  Sauces.findOne({    // recherche d'un element en fonction des paramettres utilisés
+    _id: req.params.id  // parametres Id de la sauce
+  }).then(
+    (sauces) => {        
+      const filename = sauces.imageUrl.split('/sauce_image/')[1]; // on récupère le nom du fichier image
+
+      fs.unlink(`sauce_image/${filename}`, function (error) {   // on supprime l'ancienne image
+        if (error) throw error;
+      });
+    })
+    .catch(error => res.status(500).json({ error }));   // si erreur au niveau de la recherche de la sauce
+    
+    sauceModified = {   // on construit l'objet qui sera mis à jour avec la nouvelle image
+      name: req.body.name,
+      manufacturer: req.body.manufacturer,
+      description: req.body.description,
+      mainPepper: req.body.mainPepper,
+      heat: req.body.heat,
+      userId: req.body.userId,
+      imageUrl: `${req.protocol}://${req.get('host')}/sauce_image/${req.file.filename}`    
+    }
+  } else {   
+    sauceModified = {    // on construit l'objet qui sera mis à jour avec la même image
+      name: req.body.name,
+      manufacturer: req.body.manufacturer,
+      description: req.body.description,
+      mainPepper: req.body.mainPepper,
+      heat: req.body.heat,
+      userId: req.body.userId    
+    }
+  }
+  Sauces.updateOne({ _id: req.params.id }, { ...sauceModified, _id: req.params.id })
+  .then(() => res.status(200).json({ message: 'La sauce a été modifié avec succés!' }))
+  .catch(error => res.status(400).json({ error }));
 };
 
 // Supression d'une sauce via son ID
