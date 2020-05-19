@@ -32,7 +32,6 @@ exports.getOneSauces = (req, res, next) => {
   );
 };
 
-
 // Modifiction d'une sauce
 exports.modifySauces = (req, res, next) => {
   // on contrôle s'il y a une nouvelle image
