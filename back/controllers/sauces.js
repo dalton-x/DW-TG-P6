@@ -34,41 +34,51 @@ exports.getOneSauces = (req, res, next) => {
 
 // Modifiction d'une sauce
 exports.modifySauces = (req, res, next) => {
-  // on contrôle s'il y a une nouvelle image
-  if (req.file) {   // Si l'image a été modifiée
-  Sauces.findOne({    // recherche d'un element en fonction des paramettres utilisés
-    _id: req.params.id  // parametres Id de la sauce
-  }).then(
-    (sauces) => {        
-      const filename = sauces.imageUrl.split('/sauce_image/')[1]; // on récupère le nom du fichier image
+  let updatedSauce
 
-      fs.unlink(`sauce_image/${filename}`, function (error) {   // on supprime l'ancienne image
-        if (error) throw error;
-      });
+  // Vérification d'une nouvelle image dans la requete
+  if (req.file) {
+    Sauces.findOne({ _id: req.params.id })
+    .then(sauce => {
+        // Récupération du nom del'image
+        const filename = sauce.imageUrl.split('/sauce_image/')[1];
+        
+        // Suppression de l'ancienne image
+        fs.unlink(`sauce_image/${filename}`, function (error) {
+          if (error) throw error;
+        });
     })
-    .catch(error => res.status(500).json({ error }));   // si erreur au niveau de la recherche de la sauce
-    
-    sauceModified = {   // on construit l'objet qui sera mis à jour avec la nouvelle image
-      name: req.body.name,
-      manufacturer: req.body.manufacturer,
-      description: req.body.description,
-      mainPepper: req.body.mainPepper,
-      heat: req.body.heat,
-      userId: req.body.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/sauce_image/${req.file.filename}`    
+    .catch(error => res.status(500).json({ error }));
+
+    // on récupère les informations sur l'objet
+    let bodySauce = JSON.parse(req.body.sauce);
+
+    // on construit l'objet qui sera mis à jour avec la nouvelle image
+    updatedSauce = {
+      name: bodySauce.name,
+      manufacturer: bodySauce.manufacturer,
+      description: bodySauce.description,
+      mainPepper: bodySauce.mainPepper,
+      heat: bodySauce.heat,
+      userId: bodySauce.userId,
+      imageUrl: `${req.protocol}://${req.get('host')}/sauce_image/${req.file.filename}`
     }
-  } else {   
-    sauceModified = {    // on construit l'objet qui sera mis à jour avec la même image
+  } else {
+
+    // on construit l'objet qui sera mis à jour avec la même image
+    updatedSauce = {
       name: req.body.name,
       manufacturer: req.body.manufacturer,
       description: req.body.description,
       mainPepper: req.body.mainPepper,
       heat: req.body.heat,
-      userId: req.body.userId    
+      userId: req.body.userId
     }
   }
-  Sauces.updateOne({ _id: req.params.id }, { ...sauceModified, _id: req.params.id })
-  .then(() => res.status(200).json({ message: 'La sauce a été modifié avec succés!' }))
+ 
+  // Mise a jour de la sauce avec les éléments recu par la requete
+  Sauces.updateOne({ _id: req.params.id }, { ...updatedSauce, _id: req.params.id })
+  .then(() => res.status(200).json({ message: 'La sauce a été modifié avec succés !' }))
   .catch(error => res.status(400).json({ error }));
 };
 
