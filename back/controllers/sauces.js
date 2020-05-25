@@ -40,7 +40,7 @@ exports.modifySauces = (req, res, next) => {
   if (req.file) {
     Sauces.findOne({ _id: req.params.id })
     .then(sauce => {
-        // Récupération du nom del'image
+        // Récupération du nom de l'image
         const filename = sauce.imageUrl.split('/sauce_image/')[1];
         
         // Suppression de l'ancienne image

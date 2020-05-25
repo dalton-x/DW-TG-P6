@@ -12,7 +12,7 @@ const saucesShema = mongoose.Schema({
     likes: { type: Number, default:0, require: true},             // nombre de Like reçut
     dislikes: { type: Number, default:0, require: true},          // nombre de dislike reçut
     usersLiked: { type: Array, default:0, require: true},         // Utilisateurs qui Like la sauce
-    usersDisliked: { type: Array, default:0, require: true},      // Utilisateur qui DiLike la sauce
+    usersDisliked: { type: Array, default:0, require: true},      // Utilisateur qui DisLike la sauce
 });
 
 module.exports = mongoose.model('Sauces',saucesShema);

@@ -7,3 +7,7 @@ Vous êtes développeur backend freelance et vous travaillez depuis quelques ann
 La semaine dernière, vous avez reçu un mail vous proposant un nouveau projet.
 
 La marque So Pekocko, qui crée des sauces piquantes, connaît un franc succès, en partie grâce à sa chaîne de vidéos YouTube “La piquante”.
+
+Lancé le front avec 'ng serve' pour angular.
+
+Lancé le back avec 'node server'.

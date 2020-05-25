@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //cryptage du mot de passe avec "10" passes
       .then(hash => {
         const user = new User({
-          email: req.body.email,    //recuperaation de l'email
+          email: req.body.email,    //recuperation de l'email
           password: hash            //Récueration du mot de passe crypter
         });
         user.save() // sauvegarde des informations

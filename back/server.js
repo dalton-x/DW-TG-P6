@@ -1,8 +1,10 @@
 // Déclaration des plugins importer
 const http = require('http');
+
+// Déclaration des modules interne
 const app = require('./app');
 
-// function pour configuere le port de connection en fonction de l'environnement
+// function pour configure le port de connection en fonction de l'environnement
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -19,7 +21,7 @@ const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);  //Set du port de connection
 
-//
+// function pour la gestions des erreurs
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -40,10 +42,10 @@ const errorHandler = error => {
   }
 };
 
-// creation du server
+// création d'une constante pour les appels serveur (requetes et reponses)
 const server = http.createServer(app);
 
-//
+// gestions des évenements serveur pour un retour console
 server.on('error', errorHandler);
 server.on('listening', () => {
   const address = server.address();
@@ -51,5 +53,4 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
-//
 server.listen(port);
