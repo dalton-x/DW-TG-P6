@@ -34,7 +34,7 @@ User.findOne({ email: req.body.email }) // recherche de l'utilisateur en fonctio
         }
         res.status(200).json({
             userId: user._id,
-            token: jwt.sign(    //comparaison des cryptage par bcrypt
+            token: jwt.sign(            //utilisisation de jsonWebToken
                 { userId: user._id },   //gestion du UserId
                 '$2b$10$hLNQnC3nMg7RQgnrDcdj9Oltl.UBmGruFCuNz2G.y33AjMgLJEJbq', // clé de cryptage
                 { expiresIn: '24h' }    // temps de validité

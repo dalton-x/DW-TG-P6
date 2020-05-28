@@ -21,7 +21,7 @@ exports.getOneSauces = (req, res, next) => {
     _id: req.params.id  // parametres Id de la sauce
   }).then(
     (sauces) => {
-      res.status(200).json(sauces);   // retour des inforlmations de la quace en fonction de l'id selectionner en objet
+      res.status(200).json(sauces);   // retour des informations de la sauce en fonction de l'id selectionner en objet
     }
   ).catch(  // retour d'une erreur si pas de sauce trouvée avec l'id recherché
     (error) => {
