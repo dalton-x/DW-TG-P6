@@ -29,17 +29,17 @@ User.findOne({ email: req.body.email }) // recherche de l'utilisateur en fonctio
     }
     bcrypt.compare(req.body.password, user.password)    // comparaison avec le mot de passe crypter en BDD
         .then(valid => {
-        if (!valid) {
-            return res.status(401).json({ error: 'Mot de passe incorrect !' });
-        }
-        res.status(200).json({
-            userId: user._id,
-            token: jwt.sign(            //utilisisation de jsonWebToken
-                { userId: user._id },   //gestion du UserId
-                '$2b$10$hLNQnC3nMg7RQgnrDcdj9Oltl.UBmGruFCuNz2G.y33AjMgLJEJbq', // clé de cryptage
-                { expiresIn: '24h' }    // temps de validité
-            )
-        });
+            if (!valid) {
+                return res.status(401).json({ error: 'Mot de passe incorrect !' });
+            }
+            res.status(200).json({
+                userId: user._id,
+                token: jwt.sign(            //utilisisation de jsonWebToken
+                    { userId: user._id },   //gestion du UserId
+                    '$2b$10$hLNQnC3nMg7RQgnrDcdj9Oltl.UBmGruFCuNz2G.y33AjMgLJEJbq', // clé de cryptage
+                    { expiresIn: '24h' }    // temps de validité
+                )
+            });
         })
         .catch(error => res.status(500).json({ error }));
     })
